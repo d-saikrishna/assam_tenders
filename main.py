@@ -47,8 +47,7 @@ async def upload(file: UploadFile = File(...)):
     os.remove(file_path)
 
     # Response
-    return {"file name": file.filename,
-            }
+    return {"file name": file.filename}
 
 
 if __name__ == '__main__':
