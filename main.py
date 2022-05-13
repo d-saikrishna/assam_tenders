@@ -5,11 +5,10 @@ import glob
 import shutil
 import os
 from decouple import config
+import boto3
 
-DB_HOST = config('DB_HOST')
-DB_NAME = config('DB_NAME')
-DB_USER = config('DB_USER')
-DB_PASS = config('DB_PASS')
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 
 cwd = os.getcwd()
 # Begin API
@@ -18,7 +17,6 @@ app = FastAPI()
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     file_name = file.filename
-    file_name = file_name[-10:]
     print('file')
     file_path = r'Uploads/' + file_name
 
@@ -32,18 +30,15 @@ async def upload(file: UploadFile = File(...)):
     file_path = file_path.replace('\\','/')
     print(file_path)
 
-    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
-    cur = conn.cursor()
-    cur.execute("SET search_path TO assignments")
-    sql_upload = '''
-        INSERT INTO assignments.raw_csv(csv_file,added_on) 
-        VALUES (lo_import('{}'),
-    		'2022-05-13');
-    		'''.format(file_path)
 
+    s3 = boto3.resource(
+        service_name='s3',
+        region_name='ap-south-1',
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    )
 
-    cur.execute(sql_upload)
-    conn.commit()
+    s3.Bucket('assamtenders').upload_file(Filename=file_path, Key=str(file_name)+'.csv')
     os.remove(file_path)
 
     # Response
