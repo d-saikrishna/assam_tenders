@@ -38,7 +38,7 @@ async def upload(file: UploadFile = File(...)):
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY
     )
 
-    s3.Bucket('assamtenders').upload_file(Filename=file_path, Key=str(file_name)+'.csv')
+    s3.Bucket('assamtenders').upload_file(Filename=file_path, Key=str(file_name))
     os.remove(file_path)
 
     # Response
