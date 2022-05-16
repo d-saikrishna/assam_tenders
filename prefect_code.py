@@ -425,4 +425,4 @@ with Flow('my_etl') as flow:
 
 #flow.run(parameters={'s3_key':'CivicDataLab_ Assam Public Procurement Data _ #not-to-be-shared - ocds_mapped_compiled.csv'})
 
-flow.register()
+flow.register(project_name='my_project')
