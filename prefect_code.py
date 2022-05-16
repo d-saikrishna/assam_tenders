@@ -23,7 +23,7 @@ AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 
 @task
 def extract_from_s3(s3_key):
-    #Save raw file in AWS S3 Bucket
+    #Extract raw file in AWS S3 Bucket
     s3 = boto3.resource(
         service_name='s3',
         region_name='ap-south-1',
