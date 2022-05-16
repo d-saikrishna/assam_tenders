@@ -303,6 +303,13 @@ def create_assam_rivers_table(river_names_std):
     conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST, port=5432)
     cursor = conn.cursor()
     cursor.execute("SET search_path TO assam_procurements")
+
+    river_df = psql.read_sql('''SELECT river_name FROM assam_rivers''', conn)
+    river_names = river_df.river_name.to_list()
+
+    river_names_std = list(set(river_names_std)-set(river_names))
+
+
     # CREATE TABLE for rivers
     cursor.execute(
         "CREATE TABLE IF NOT EXISTS assam_procurements.assam_rivers (id serial PRIMARY KEY, river_name varchar);")
@@ -414,6 +421,6 @@ with Flow('my_etl') as flow:
     create_tender_river_table(tender_river_df)
 
 
-#flow.visualize()
+flow.visualize()
 
-flow.run(parameters={'s3_key':'CivicDataLab_ Assam Public Procurement Data _ #not-to-be-shared - ocds_mapped_compiled.csv'})
+#flow.run(parameters={'s3_key':'CivicDataLab_ Assam Public Procurement Data _ #not-to-be-shared - ocds_mapped_compiled.csv'})
